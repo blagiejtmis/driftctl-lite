@@ -44,6 +44,15 @@ func TestSummarize_WithUntracked(t *testing.T) {
 	}
 }
 
+func TestSummarize_WithChanged(t *testing.T) {
+	r := baseReport()
+	r.Changed = append(r.Changed, Resource{Type: "aws_s3_bucket", ID: "b"})
+	s := Summarize(r)
+	if !s.HasDrift() || s.Changed != 1 {
+		t.Errorf("expected drift via changed, got %+v", s)
+	}
+}
+
 func TestFprintSummary_NoDrift(t *testing.T) {
 	var buf bytes.Buffer
 	FprintSummary(&buf, Summary{Total: 3, Managed: 3})
