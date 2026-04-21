@@ -78,3 +78,12 @@ func TestFprintRemediation_WithHints(t *testing.T) {
 		t.Errorf("expected terraform import hint in output")
 	}
 }
+
+func TestFprintRemediation_EmptyHints(t *testing.T) {
+	// An explicitly empty (non-nil) slice should also produce "No remediation needed"
+	var buf bytes.Buffer
+	FprintRemediation(&buf, []RemediationHint{})
+	if !strings.Contains(buf.String(), "No remediation needed") {
+		t.Errorf("expected 'No remediation needed' for empty hints slice, got: %s", buf.String())
+	}
+}
