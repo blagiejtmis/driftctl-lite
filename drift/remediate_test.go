@@ -38,6 +38,22 @@ func TestRemediate_MissingAndUntracked(t *testing.T) {
 	}
 }
 
+func TestRemediate_HintResourceDetails(t *testing.T) {
+	report := baseRemediationReport()
+	hints := Remediate(report)
+	if len(hints) < 1 {
+		t.Fatal("expected at least one hint")
+	}
+	importHint := hints[0]
+	if importHint.Resource.Type != "aws_instance" || importHint.Resource.ID != "i-missing" {
+		t.Errorf("import hint has wrong resource: got type=%s id=%s", importHint.Resource.Type, importHint.Resource.ID)
+	}
+	removeHint := hints[1]
+	if removeHint.Resource.Type != "aws_lambda_function" || removeHint.Resource.ID != "fn-untracked" {
+		t.Errorf("remove hint has wrong resource: got type=%s id=%s", removeHint.Resource.Type, removeHint.Resource.ID)
+	}
+}
+
 func TestFprintRemediation_NoHints(t *testing.T) {
 	var buf bytes.Buffer
 	FprintRemediation(&buf, nil)
