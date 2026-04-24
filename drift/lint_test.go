@@ -11,6 +11,18 @@ func baseLintResources() []Resource {
 	}
 }
 
+// hasViolation is a helper that checks whether a LintResult contains a violation with the given name.
+func hasViolation(r LintResult, name string) bool {
+	for _, res := range r.Results {
+		for _, v := range res.Violations {
+			if v.Name == name {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func TestLint_NoViolations(t *testing.T) {
 	r := Lint(baseLintResources())
 	if LintHasErrors(r) {
@@ -35,13 +47,7 @@ func TestLint_MissingType(t *testing.T) {
 	if !LintHasErrors(r) {
 		t.Fatal("expected violations")
 	}
-	found := false
-	for _, v := range r.Results[0].Violations {
-		if v.Name == "missing-type" {
-			found = true
-		}
-	}
-	if !found {
+	if !hasViolation(r, "missing-type") {
 		t.Error("missing-type rule not found")
 	}
 }
