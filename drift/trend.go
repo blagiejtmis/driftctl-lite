@@ -57,3 +57,12 @@ func TrendEntryFromScore(s ScoreResult) TrendEntry {
 		Untracked: s.Untracked,
 	}
 }
+
+// Latest returns the most recent TrendEntry in the log, and a boolean
+// indicating whether any entries exist.
+func (t TrendLog) Latest() (TrendEntry, bool) {
+	if len(t.Entries) == 0 {
+		return TrendEntry{}, false
+	}
+	return t.Entries[len(t.Entries)-1], true
+}
